@@ -4,12 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.io.Serializable;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-public class Likes {
+public class Likes implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

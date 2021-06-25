@@ -1,14 +1,8 @@
 package com.webblog.service.ServiceImpl;
 
 import com.webblog.POJO.PostMapper;
-import com.webblog.model.Comment;
-import com.webblog.model.Likes;
-import com.webblog.model.Person;
-import com.webblog.model.Post;
-import com.webblog.repository.CommentRepository;
-import com.webblog.repository.LikesRepository;
-import com.webblog.repository.PersonRepository;
-import com.webblog.repository.PostRepository;
+import com.webblog.model.*;
+import com.webblog.repository.*;
 import com.webblog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -29,6 +24,8 @@ public class PostServiceImpl implements PostService {
     LikesRepository likesRepository;
     @Autowired
     CommentRepository commentRepository;
+    @Autowired
+    FollowRepository followRepository;
 
     /**
      * CREATE operation on Post
@@ -127,11 +124,11 @@ public class PostServiceImpl implements PostService {
      * @param postId
      * @return boolean(true for successful creation and false on failure to create)
      * */
-    public List<Post> getPostById(Long postId){
-        List<Post> postList = new ArrayList<>();
+    public Post getPostById(Long postId){
+        Post postList = null;
 
         try{
-            postList = postRepository.findPostById(postId);
+            postList = postRepository.findById(postId).get();
         }catch(Exception e){
             System.out.println("Something went wrong1 "+e.getMessage());
         }
@@ -149,12 +146,15 @@ public class PostServiceImpl implements PostService {
         String flag = "failed to upload post";
 
         try {
+
             Post data = postRepository.findById(post.getId()).get();
 
             //checking if the person updating the post is same as the owner of the post
-            if(data.getPerson().getEmail() == person.getEmail()){
-                data.setTitle(post.getTitle());
-                data.setBody(post.getBody());
+            if(data.getPerson().getEmail().equals(person.getEmail())){
+                if(post.getTitle() != null)
+                    data.setTitle(post.getTitle());
+                if(post.getBody() != null)
+                    data.setBody(post.getBody());
 
                 postRepository.save(data);
 
@@ -173,15 +173,16 @@ public class PostServiceImpl implements PostService {
     /**
      * DELETE operation on Post
      * @param postId
-     * @param personId
+     * @param person
      * @return boolean
      * */
-    public String deletePost(Long postId, Long personId){
+    public String deletePost(Long postId, Person person){
         String status =  "failed to delete post";
 
         try {
+            Person person1 = personRepository.findPersonByEmail(person.getEmail()).get();
 
-            Post post = postRepository.findPostByIdAndPersonId(postId, personId);
+            Post post = postRepository.findPostByIdAndPersonId(postId, person1.getId());
 
             if(post != null){
                 post.setStatus("INACTIVE");
@@ -194,5 +195,28 @@ public class PostServiceImpl implements PostService {
             e.printStackTrace();
         }
         return status;
+    }
+
+    public List<Post> displayAllPostByFollower(Long id, Person person) {
+        Person person1 = personRepository.findPersonByEmail(person.getEmail()).get();
+        List<Post> posts = new ArrayList<>();
+
+        try {
+            List<Follow> list = followRepository.findAllByFollowerId(person1.getId());
+            System.out.println("here, "+list.get(0).getCurrentUserId());
+            System.out.println("there "+id);
+
+            List<Long> listofIDs = list.stream().map(user -> user.getCurrentUserId())
+                        .collect(Collectors.toList());
+
+            if(listofIDs.contains(id)){
+                posts = postRepository.findPostByPersonId(person1.getId());
+            }
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+
+        return posts;
     }
 }

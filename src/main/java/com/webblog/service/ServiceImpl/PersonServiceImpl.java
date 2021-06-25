@@ -227,6 +227,8 @@ public class PersonServiceImpl implements PersonService {
                     personRepository.save(person1);
 
                     flag = "successfully reversed";
+                }else{
+                    flag = "user not found";
                 }
             }
         } catch (Exception e) {

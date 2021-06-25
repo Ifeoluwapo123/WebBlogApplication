@@ -12,15 +12,15 @@ import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/favourites")
-public class Favourite {
+public class FavouriteController {
 
     @Autowired
     private FavouriteService favouriteService;
 
-    @PostMapping("/{id}")
-    public ResponseEntity<?> saveFavourite(@PathVariable Long postId, HttpSession httpSession){
+    @PutMapping("/{id}")
+    public ResponseEntity<?> saveFavourite(@PathVariable Long id, HttpSession httpSession){
         ResponseHandler res = new ResponseHandler();
-
+        System.out.println("wow "+id);
         Person person = (Person) httpSession.getAttribute("person");
 
         if(person == null) {
@@ -29,7 +29,7 @@ public class Favourite {
             return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
         }
 
-        if(favouriteService.saveFavourite(person, postId)){
+        if(favouriteService.saveFavourite(person, id)){
             res.setMessage("successfully added to favourites");
             res.setStatusCode(201);
 
@@ -43,8 +43,8 @@ public class Favourite {
 
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUserFavourites(@PathVariable Long userId, HttpSession httpSession){
+    @GetMapping("")
+    public ResponseEntity<?> getUserFavourites(HttpSession httpSession){
 
         ResponseHandler res = new ResponseHandler();
 

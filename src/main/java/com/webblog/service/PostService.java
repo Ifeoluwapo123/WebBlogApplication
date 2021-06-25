@@ -10,8 +10,9 @@ import java.util.List;
 
 public interface PostService {
     boolean createPost(MultipartFile file, Person user, String body, String title);
-    List<Post> getPostById(Long postId);
+    Post getPostById(Long postId);
     String updatePost(Person person, Post post);
-    String deletePost(Long postId, Long personId);
+    String deletePost(Long postId, Person person);
     List<PostMapper> getPost(Person currentUser);
+    List<Post> displayAllPostByFollower(Long id, Person person);
 }

@@ -46,7 +46,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPostById(@PathVariable Long id, HttpSession httpSession){
+    public ResponseEntity<?> getPostByPostId(@PathVariable Long id, HttpSession httpSession){
         ResponseHandler res = new ResponseHandler();
 
         Person person = (Person) httpSession.getAttribute("person");
@@ -57,9 +57,7 @@ public class PostController {
             return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
         }
 
-        List<Post> post = postService.getPostById(id);
-
-        return new ResponseEntity<>(post, HttpStatus.OK);
+        return new ResponseEntity<>(postService.getPostById(id), HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -119,7 +117,7 @@ public class PostController {
             return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
         }
 
-        String message = postService.deletePost(id, person.getId());
+        String message = postService.deletePost(id, person);
         res.setMessage(message);
 
         if(message.equals("successfully deleted post")){
@@ -133,4 +131,19 @@ public class PostController {
             return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping("/followeepost/{id}")
+    public ResponseEntity<?> getPostByFollowee(@PathVariable Long id, HttpSession httpSession){
+        ResponseHandler res = new ResponseHandler();
+
+        Person person = (Person) httpSession.getAttribute("person");
+
+        if(person == null) {
+            res.setMessage("User not login");
+            res.setStatusCode(401);
+
+            return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(postService.displayAllPostByFollower(id, person), HttpStatus.OK);
+    }
+
 }

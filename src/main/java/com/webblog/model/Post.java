@@ -1,18 +1,11 @@
 package com.webblog.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Entity
 public class Post extends TimerController implements Serializable {
    @Id
@@ -28,14 +21,64 @@ public class Post extends TimerController implements Serializable {
    @Column(nullable = false, columnDefinition = "TEXT")
    private String body;
 
+   @JsonIgnore
    @Column(columnDefinition = "MEDIUMBLOB")
    private String image;
 
+   @JsonIgnore
    @Column(nullable = false)
    private String status;
 
-   @ManyToOne(fetch = FetchType.LAZY)
+   @JsonIgnore
+   @ManyToOne
    @JoinColumn(name = "personId", referencedColumnName = "id")
    private Person person;
 
+   public Long getId() {
+      return id;
+   }
+
+   public void setId(Long id) {
+      this.id = id;
+   }
+
+   public String getTitle() {
+      return title;
+   }
+
+   public void setTitle(String title) {
+      this.title = title;
+   }
+
+   public String getBody() {
+      return body;
+   }
+
+   public void setBody(String body) {
+      this.body = body;
+   }
+
+   public String getImage() {
+      return image;
+   }
+
+   public void setImage(String image) {
+      this.image = image;
+   }
+
+   public String getStatus() {
+      return status;
+   }
+
+   public void setStatus(String status) {
+      this.status = status;
+   }
+
+   public Person getPerson() {
+      return person;
+   }
+
+   public void setPerson(Person person) {
+      this.person = person;
+   }
 }

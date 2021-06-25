@@ -180,7 +180,42 @@ public class PersonController {
                 res.setStatusCode(401);
 
                 return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
+            }else if(message.equals("user not found")){
+                res.setStatusCode(404);
+
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
             }
+
+            return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PutMapping("/follow/{id}")
+    public ResponseEntity<ResponseHandler> followUser(@PathVariable Long id, HttpSession httpSession){
+        Person person = (Person) httpSession.getAttribute("person");
+
+        //http server response
+        ResponseHandler res = new ResponseHandler();
+
+        if(person == null) {
+            res.setStatusCode(401);
+            res.setMessage("user not login!!!");
+
+            return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
+        }
+
+        String message = followService.followPerson(id, person);
+
+        if(message.equals("successful followed") || message.equals("successfully unfollowed")){
+            res.setStatusCode(201);
+            res.setMessage(message);
+
+            return new ResponseEntity<>(res, HttpStatus.OK);
+
+        }else{
+            res.setStatusCode(500);
+            res.setMessage("Server Error");
 
             return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -194,9 +229,18 @@ public class PersonController {
         //http server response
         ResponseHandler res = new ResponseHandler();
 
+        var data = followService.getFollowersById(id, person);
+
         if(person == null) {
             res.setStatusCode(401);
             res.setMessage("user not login!!!");
+
+            return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
+        }
+
+        if(data.equals("user not authorized")){
+            res.setStatusCode(401);
+            res.setMessage((String) data);
 
             return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
         }

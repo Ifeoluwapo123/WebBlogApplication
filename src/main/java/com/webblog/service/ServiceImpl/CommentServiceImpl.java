@@ -5,6 +5,7 @@ import com.webblog.model.Comment;
 import com.webblog.model.Person;
 import com.webblog.model.Post;
 import com.webblog.repository.CommentRepository;
+import com.webblog.repository.PersonRepository;
 import com.webblog.repository.PostRepository;
 import com.webblog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class CommentServiceImpl implements CommentService {
     private CommentRepository commentRepository;
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private PersonRepository personRepository;
 
     /**
      * CREATE operation on Comment
@@ -32,12 +35,13 @@ public class CommentServiceImpl implements CommentService {
         boolean result = false;
 
         try{
-
+            Person person = personRepository.findById(userId).get();
             Post post = postRepository.findById(postId).get();
 
             Comment commentData = new Comment();
             //set the post
             commentData.setPost(post);
+            commentData.setPerson(person);
             commentData.setComment(comment);
 
             commentRepository.save(commentData);
@@ -99,14 +103,19 @@ public class CommentServiceImpl implements CommentService {
     public boolean editComment(Long commentId, Person person, Long postId, String comment) {
         boolean status = false;
 
+        System.out.println("here "+commentId);
+
+        Comment data = commentRepository.findById(commentId).get();
+
         try {
             Post post = postRepository.findById(postId).get();
 
-            Comment data = commentRepository.findById(commentId).get();
+            Person person1 = personRepository.findPersonByEmail(person.getEmail()).get();
 
             data.setComment(comment);
-            data.setPerson(person);
+            data.setPerson(person1);
             data.setPost(post);
+
             commentRepository.save(data);
 
             status = true;
