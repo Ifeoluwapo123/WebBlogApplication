@@ -1,12 +1,36 @@
+resource "aws_s3_bucket" "s3_bucket_myapp" {
+  bucket = "blogapi-adenusidamilola5gmailcom-${var.environment_suffix}"
+  acl    = "private"
+
+  tags = {
+    Name        = "Blog"
+    Environment = "Prod"
+  }
+}
+
+resource "aws_s3_bucket_object" "s3_bucket_object_myapp" {
+  bucket = aws_s3_bucket.s3_bucket_myapp.id
+  key    = "beanstalk/myapp"
+  source = "../target/WebBlog-0.0.1-SNAPSHOT.jar"
+}
+
 resource "aws_elastic_beanstalk_application" "beanstalk_myapp" {
   name        = "myapp"
   description = "The description of my application"
 }
 
+resource "aws_elastic_beanstalk_application_version" "beanstalk_myapp_version" {
+  application = aws_elastic_beanstalk_application.beanstalk_myapp.name
+  bucket      = aws_s3_bucket.s3_bucket_myapp.id
+  key         = aws_s3_bucket_object.s3_bucket_object_myapp.id
+  name        = "myapp-${var.myapp_version}"
+}
+
 resource "aws_elastic_beanstalk_environment" "springboot_app" {
   name                = "myapp-prod"
   application         = aws_elastic_beanstalk_application.beanstalk_myapp.name
-  solution_stack_name = "64bit Amazon Linux 2 v3.4.11 running Docker"
+  solution_stack_name = "64bit Amazon Linux 2 v3.2.10 running Corretto 11"
+  version_label       = aws_elastic_beanstalk_application_version.beanstalk_myapp_version.name
 
   setting {
     namespace = "aws:ec2:vpc"
@@ -112,4 +136,5 @@ resource "aws_elastic_beanstalk_environment" "springboot_app" {
     namespace = "aws:elasticbeanstalk:application:environment"
     value     = "5000"
   }
+
 }
