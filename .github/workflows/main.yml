@@ -34,6 +34,5 @@ jobs:
           application_name: springboot-docker
           environment_name: springboot-docker-prod
           version_label: "springboot-docker-${{ steps.format-time.outputs.replaced }}"
-
           region: us-east-1
           deployment_package: deploy.zip
