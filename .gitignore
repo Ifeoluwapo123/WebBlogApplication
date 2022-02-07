@@ -1,5 +1,10 @@
 HELP.md
-target/
+target/classes
+target/generated*
+target/maven*
+target/surefire-reports
+target/test-classes
+target/myapp.jar.original
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
