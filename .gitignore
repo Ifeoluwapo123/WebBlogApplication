@@ -33,3 +33,7 @@ data.txt
 ### VS Code ###
 .vscode/
 my-db
+terraform/.terraform.lock.hcl
+terraform/.terraform
+terraform/terraform.tfvars
+terraform/terraform.tfstate
