@@ -1,10 +1,10 @@
 resource "aws_elastic_beanstalk_application" "beanstalk_myapp" {
-  name        = "springboot-docker"
-  description = "dockerizing web blog application"
+  name        = "myapp"
+  description = "The description of my application"
 }
 
 resource "aws_elastic_beanstalk_environment" "springboot_app" {
-  name                = "springboot-docker-prod"
+  name                = "myapp-prod"
   application         = aws_elastic_beanstalk_application.beanstalk_myapp.name
   solution_stack_name = "64bit Amazon Linux 2 v3.4.11 running Docker"
 

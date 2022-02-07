@@ -37,3 +37,5 @@ terraform/.terraform*
 terraform/terraform*
 terraform/terraform.tfvars
 .env
+.github/workflows/test.yml
+terraform/file

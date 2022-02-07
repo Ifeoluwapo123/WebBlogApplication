@@ -18,3 +18,8 @@ variable "environment_suffix" {
   type    = string
   default = "production"
 }
+
+variable "myapp_version" {
+  type    = string
+  default = "1.0.0"
+}

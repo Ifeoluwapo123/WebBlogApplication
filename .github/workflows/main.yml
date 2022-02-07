@@ -9,30 +9,16 @@ jobs:
     steps:
       - name: Checkout Latest Repo
         uses: actions/checkout@main
-        
-      - name: Generate Deployment Package 
+
+      - name: Generate Deployment Package
         run: zip -r deploy.zip *
-        
-      - name: Get timestamp
-        uses: gerred/actions/current-time@master
-        id: current-time
-        
-      - name: Run string replace
-        uses: frabert/replace-string-action@master
-        id: format-time
-        with:
-          pattern: '[:\.]+'
-          string: "${{ steps.current-time.outputs.time }}"
-          replace-with: '-'
-          flags: 'g'
-          
+
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v14
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: springboot-docker
-          environment_name: springboot-docker-prod
-          version_label: "springboot-docker-${{ steps.format-time.outputs.replaced }}"
+          application_name: myapp
+          environment_name: myapp-prod
           region: us-east-1
           deployment_package: deploy.zip
