@@ -229,7 +229,7 @@ public class PersonController {
         //http server response
         ResponseHandler res = new ResponseHandler();
 
-        var data = followService.getFollowersById(id, person);
+        Object data = followService.getFollowersById(id, person);
 
         if(person == null) {
             res.setStatusCode(401);
